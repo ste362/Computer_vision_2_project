@@ -1,7 +1,7 @@
 import torch
 from PIL import Image
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 import time
 import argparse
 from progress.bar import IncrementalBar
@@ -14,7 +14,7 @@ from gan.utils import Logger, initialize_weights
 
 
 parser = argparse.ArgumentParser(prog = 'top', description='Train Pix2Pix')
-parser.add_argument("--epochs", type=int, default=10, help="Number of epochs")
+parser.add_argument("--epochs", type=int, default=30, help="Number of epochs")
 parser.add_argument("--dataset", type=str, default="facades", help="Name of the dataset: ['facades', 'maps', 'cityscapes']")
 parser.add_argument("--batch_size", type=int, default=32, help="Size of the batches")
 parser.add_argument("--lr", type=float, default=0.0002, help="Adams learning rate")
@@ -23,9 +23,7 @@ args = parser.parse_args()
 device = ('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 transforms = T.Compose([T.Resize((256,256)),
-                        T.ToTensor(),
-                        T.Normalize(mean=[0.5, 0.5, 0.5],
-                                     std=[0.5, 0.5, 0.5])])
+                        T.ToTensor()])
 # models
 print('Defining models!')
 generator = UnetGenerator().to(device)
@@ -36,10 +34,13 @@ d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=args.lr, betas=(0.
 # loss functions
 g_criterion = GeneratorLoss(alpha=100)
 d_criterion = DiscriminatorLoss()
-# dataset
-print(f'Downloading "{args.dataset.upper()}" dataset!')
-#if args.dataset=='cityscapes':
-dataset = TU_Graz(root='./TU-Graz', transform=transforms, mode='train')
+
+dataset = TU_Graz(root='./TU-Graz/train', transform=transforms, mode='train')
+
+PATH_GENERATOR="./runs/generator.pt"
+PATH_DISCRIMINATOR="./runs/discriminator.pt"
+generator.load_state_dict(torch.load(PATH_GENERATOR))
+discriminator.load_state_dict(torch.load(PATH_DISCRIMINATOR))
 
 #elif args.dataset=='maps':
 #    dataset = Maps(root='.', transform=transforms, download=True, mode='train')
@@ -52,7 +53,7 @@ for epoch in range(args.epochs):
     de_loss=0.
     start = time.time()
     bar = IncrementalBar(f'[Epoch {epoch+1}/{args.epochs}]', max=len(dataloader))
-    for x,real in dataloader:
+    for real,x in dataloader:
 
         x = x.to(device)
         real = real.to(device)
@@ -82,7 +83,7 @@ for epoch in range(args.epochs):
         de_loss += d_loss.item()
         bar.next()
     bar.finish()  
-    # obttain per epoch losses
+    # obtain per epoch losses
     g_loss = ge_loss/len(dataloader)
     d_loss = de_loss/len(dataloader)
     # count timeframe

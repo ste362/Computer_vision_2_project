@@ -1,3 +1,5 @@
+import PIL
+import numpy as np
 import torch
 from PIL import Image
 from matplotlib import pyplot as plt, colors, cm
@@ -25,8 +27,7 @@ device = ('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 transforms = T.Compose([T.Resize((256,256)),
                         T.ToTensor(),
-                        T.Normalize(mean=[0.5, 0.5, 0.5],
-                                    std=[0.5, 0.5, 0.5])])
+                    ])
 # models
 print('Defining models!')
 generator = UnetGenerator().to(device)
@@ -44,23 +45,28 @@ generator.load_state_dict(torch.load(PATH_GENERATOR))
 discriminator.load_state_dict(torch.load(PATH_DISCRIMINATOR))
 
 
-dataset=TU_Graz(root='./TU-Graz', transform=transforms, mode='train')
+dataset=TU_Graz(root='./TU-Graz/test', transform=transforms)
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,)
-for x,real in dataloader:
+for real,x in dataloader:
     x = x.to(device)
-    real = real.to(device)
     output=generator(x)
     x=x.cpu()
     output=output.cpu()
-    #print(invTrans(x)[0].permute(1, 2, 0))
-    #plt.imshow(invTrans(x)[0].permute(1, 2, 0))
-    #norm1 = colors.LogNorm(output[0].mean() + 0.5 * output[0].std(), output[0].max(), clip='True')
 
-    plt.imshow((x[0][0]+x[0][1]+x[0][2])/3, origin="lower")
-    plt.show()
-    output=output.detach().numpy()
-    plt.imshow((output[0][0]+output[0][1]+output[0][2])/3,  origin="lower")
-    #plt.imshow(invTrans(output)[0].permute(1, 2, 0))
-    plt.show()
 
+
+    x=x.reshape(3,256,256)
+    real=real.reshape(3,256,256)
+    output=output.reshape(3,256,256)
+
+
+    fig=plt.figure(figsize=(12,12))
+    fig.add_subplot(1,3,1)
+    plt.imshow(x.permute(1,2,0).detach().numpy())
+    fig.add_subplot(1,3,2)
+    plt.imshow(real.permute(1,2,0).detach().numpy())
+    fig.add_subplot(1,3,3)
+    plt.imshow(output.permute(1,2,0).detach().numpy())
+    plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
+    plt.show()
     break
