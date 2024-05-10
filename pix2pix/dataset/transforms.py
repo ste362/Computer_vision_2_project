@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from PIL import Image
 
+
 class Transformer(object):
     """"Transform"""
     def __init__(self,):
@@ -203,6 +204,7 @@ class DeNormalize(Transformer):
             return imgA
         return imgA, imgB
 
-    
+
+
 __all__ = ['Transformer', 'Compose', 'Resize', 'CenterCrop', 'Rotate', 'HorizontalFlip',
-           'VerticalFlip', 'ToTensor', 'ToImage', 'Normalize', 'DeNormalize',]
+           'VerticalFlip', 'ToTensor', 'ToImage', 'Normalize', 'DeNormalize']
