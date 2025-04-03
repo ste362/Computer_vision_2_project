@@ -25,6 +25,8 @@ Below is a comparison of different configurations tested:
 | Augmented  | 0.153     | 0.044     | 0.236     | 13.808     |
 | Aug + KLD  | **0.183** | **0.053** | **0.242** | **13.894** |
 
+## Result
+![Alt text](img_2.png)
 
 ## For more information there is a report that explains the project in detail
 
