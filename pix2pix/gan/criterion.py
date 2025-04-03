@@ -14,7 +14,7 @@ class GeneratorLoss(nn.Module):
     def forward(self, fake, real, fake_pred):
         fake_target = torch.ones_like(fake_pred)
         loss = self.bce(fake_pred, fake_target) + self.alpha * self.l1(fake, real)
-        if self.loss_name == 'kld_beta=1':
+        if self.loss_name == 'kld_beta':
             real_d = torch.log_softmax(real, dim=1)
             fake_d = torch.log_softmax(fake, dim=1)
             loss += self.beta*self.kld(fake_d, real_d)

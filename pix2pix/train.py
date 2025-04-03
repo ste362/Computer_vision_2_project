@@ -34,7 +34,7 @@ discriminator = ConditionalDiscriminator().to(device)
 g_optimizer = torch.optim.Adam(generator.parameters(), lr=args.lr, betas=(0.5, 0.999))
 d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=args.lr, betas=(0.5, 0.999))
 # loss functions
-g_criterion = GeneratorLoss(alpha=100,loss_name='kld_beta')
+g_criterion = GeneratorLoss(alpha=100, loss_name='kld_beta')
 d_criterion = DiscriminatorLoss()
 
 dataset = TU_Graz(root='./TU-Graz/train', transform=transforms, mode='train')

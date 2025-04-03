@@ -60,8 +60,8 @@ for real,x in dataloader:
 
 
 # metrics compute
-print("fid",fid.compute())
-print("Vif",vif.compute())
-print("Uqi",uqi.compute())
-print("Ssim",ssim.compute())
-print("PSNR",psnr.compute())
+print("fid",fid.compute().item())
+print("Vif",vif.compute().item())
+print("Uqi",uqi.compute().item())
+print("Ssim",ssim.compute().item())
+print("PSNR",psnr.compute().item())

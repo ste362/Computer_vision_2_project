@@ -1,9 +1,10 @@
 import torch
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 from dataset import TU_Graz
 from gan.generator import UnetGenerator
 from torchvision.transforms import v2 as T
+import time
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -14,6 +15,8 @@ else:
 
 transforms = T.Compose([T.Resize(size=(256, 256)),
                         T.ToTensor()])
+
+print(device)
 # models
 print('Defining models!')
 generator_std = UnetGenerator().to(device)
@@ -37,6 +40,7 @@ generator_aug_kld.load_state_dict(torch.load(PATH_GENERATOR_AUG_KLD, map_locatio
 batch_size = 1
 dataset = TU_Graz(root='./TU-Graz/test', transform=transforms)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+start=time.time()
 
 i = 0
 for real, x in dataloader:
@@ -49,6 +53,7 @@ for real, x in dataloader:
     output_aug = generator_aug(x)
     output_aug_kld = generator_aug_kld(x)
 
+
     # move tensor to cpu
     x = x.cpu()
     real = real.cpu()
@@ -57,6 +62,7 @@ for real, x in dataloader:
     output_aug = output_aug.cpu()
     output_aug_kld = output_aug_kld.cpu()
 
+    '''
     # reshape
     x = x.reshape(3, 256, 256)
     real = real.reshape(3, 256, 256)
@@ -82,4 +88,5 @@ for real, x in dataloader:
     plt.show()
 
     i += 1
-
+    '''
+print('Done!', round(time.time() - start,2), 's')
