@@ -26,9 +26,9 @@ Below is a comparison of different configurations tested:
 | Aug + KLD  | **0.183** | **0.053** | **0.242** | **13.894** |
 
 ## Result
-![Alt text](img_2.png)
+![Alt text](results/img_2.png)
 
-## For more information there is a report that explains the project in detail
+## For more information there is the file Report.pdf that explains the project in detail
 
 ## References
 - [📄 Pix2Pix Paper (Isola et al., 2018)](https://arxiv.org/abs/1611.07004)
